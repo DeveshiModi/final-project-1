@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: color-palette-backend
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: GEMINI_API_KEY
+        sync: false  # You'll need to set this in Render's dashboard 
