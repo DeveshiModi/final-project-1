@@ -22,10 +22,9 @@ app.use(express.static(path.join(__dirname, 'build')));
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
-// Root route handler
-app.get("/", (req, res) => {
-  console.log("Root route accessed");
-  res.json({ message: "Color Palette Generator API is running" });
+// API routes
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok", message: "Color Palette Generator API is running" });
 });
 
 app.post("/api/colors", async (req, res) => {
@@ -158,8 +157,8 @@ app.get("/api/models", async (req, res) => {
   }
 });
 
-// Add this before the error handling middleware
-app.get('*', (req, res) => {
+// Serve React app for all other routes
+app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
