@@ -6,24 +6,14 @@ const path = require("path");
 const app = express();
 
 // CORS configuration for production
-const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? ['https://color-palette-web.onrender.com', 'https://final-project-1-r2ud.onrender.com']
-  : [/^http:\/\/localhost:\d+$/];
-
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true); // allow non-browser clients
-    if (allowedOrigins.some(o => (typeof o === 'string' ? o === origin : o.test(origin)))) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://color-palette-web.onrender.com', 'https://final-project-1-r2ud.onrender.com'] // Add your Render domain
+    : /^http:\/\/localhost:\d+$/,
   methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type"],
   credentials: true
 }));
-
 
 app.use(express.json());
 
