@@ -1,17 +1,24 @@
 const express = require("express");
 const fetch = require("node-fetch");
 const cors = require("cors");
+const path = require("path");
 
 const app = express();
 
+// CORS configuration for production
 app.use(cors({
-  origin: /^http:\/\/localhost:\d+$/,
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://color-palette-web.onrender.com', 'https://final-project-1-r2ud.onrender.com/api/colors'] // Add your Render domain
+    : /^http:\/\/localhost:\d+$/,
   methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type"],
   credentials: true
 }));
 
 app.use(express.json());
+
+// Serve static files from the React build directory
+app.use(express.static(path.join(__dirname, 'build')));
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -151,15 +158,20 @@ app.get("/api/models", async (req, res) => {
   }
 });
 
+// Add this before the error handling middleware
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error("Server error:", err.stack);
   res.status(500).json({ error: "Something went wrong!" });
 });
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
-  console.log(`🚀 Gemini proxy server running at http://localhost:${PORT}`);
-  console.log("CORS enabled for all localhost ports");
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
